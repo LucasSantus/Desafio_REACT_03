@@ -1,12 +1,15 @@
 import { useState } from 'react';
 
-import { Container, TextField, Grid, Button } from '@mui/material';
+import { Container, Grid, Button, Typography, Box, Paper, Card, CardContent, Tooltip, Divider, CardActions, AvatarGroup, Stack } from '@mui/material';
 
 import { useEffect } from "react";
 import { ApiService } from '../api/ApiService';
+import { ForecastInterface, WeatherInterface } from '../types/types';
+import { padding } from '@mui/system';
+import { TextFieldCustom } from '../ui/styles/TextField';
 
 export default function Dashboard(){
-    const [weather, setWeather] = useState(''); // Criar uma instancia WEATHER
+    const [weather, setWeather] = useState<WeatherInterface>();
     const [city, setCity] = useState('');
 
     const handleChangeCity = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -17,7 +20,7 @@ export default function Dashboard(){
         ApiService
             .get(`/weather?cityName=${city}`)
             .then((response) => {
-                // setWeather(response.data);
+                setWeather(response.data);
                 console.log(response.data)
             })
             .catch((error) => {
@@ -25,25 +28,44 @@ export default function Dashboard(){
             });
     }
 
-    // function handleDelete(id: string){
-    //     ApiService
-    //         .delete(`/disciplines/${id}`)
-    //         .then(() => {
-    //             handleGetAllDisciplines();
-    //         })
-    //         .catch((error) => {
-    //             console.log(`Falha ao tentar deletar o aluno!\n Erro: ${error}`);
-    //         });
-    // }
+    function handleDay(day: string){
+        switch(day){
+            case "Seg":
+                return "Segunda-Feira";
+                break;
+            case "Ter":
+                return "Terça-Feira";
+                break;
+            case "Qua":
+                return "Quarta-Feira";
+                break;
+            case "Qui":
+                return "Quinta-Feira";
+                break;
+            case "Sex":
+                return "Sexta-Feira";
+                break;
+            case "Sáb":
+                return "Sábado";
+                break;
+            case "Dom":
+                return "Domingo";
+                break;
+        }
+    }
 
     return (
         <>
-            <Container>
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                        <TextField
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <Container 
+                        sx={{
+                            paddingTop:'40px',
+                        }}
+                    >
+                        <TextFieldCustom
                             sx={{
-                                width: '100%',
+                                width: '70%',
                             }}
                             required
                             id="id_city"
@@ -53,28 +75,123 @@ export default function Dashboard(){
                             defaultValue={city}
                             onChange={handleChangeCity}
                         />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                        <Button
+                    </Container>
+                </Grid>
+                <Grid item xs={12}>
+                    <Button
+                        sx={{
+                            mt: { xs: 2, md: 0 }, 
+                            backgroundColor: '#7063C0',
+                            '&:hover': {
+                                background: '#6153bb' ,
+                                opacity: 0.5
+                            },
+                        }}
+                        variant="contained"
+                        onClick={() => {
+                            handleGetWeather()
+                        }}
+                    >
+                        Buscar
+                    </Button>
+                </Grid>
+                {weather ? (
+                    weather.forecast.map((item) => (
+                        <Grid item xs={12} md={4} key={item.date}
                             sx={{
-                                mt: { xs: 2, md: 0 }, 
-                                backgroundColor: '#7063C0',
-                                '&:hover': {
-                                    background: '#6153bb' ,
-                                    opacity: 0.5
-                                },
-                            }}
-                            variant="contained"
-                            onClick={() => {
-                                handleGetWeather()
+                                pb: 2, 
+                                color: '#48539b',
                             }}
                         >
-                            Buscar
-                        </Button>
-                    </Grid>
-                </Grid>
-            </Container>
+                            <Container>
+                                <Paper elevation={3}
+                                    sx={{
+                                        height: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'column'
+                                    }}
+                                >
+                                    <Card
+                                        sx={{
+                                            backgroundColor: "#151c46",
+                                            border: '1px solid',
+                                            borderColor: '#48539b',
+                                            height: '100%',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'space-between'
+                                        }}
+                                    >
+                                        <CardContent sx={{ height: '100%' }} >
+                                            <Typography 
+                                                sx={{
+                                                    pb: 2, 
+                                                    color: 'white',
+                                                    display: 'flex',
+                                                    alignContent: 'start',
+                                                    justifyContent: 'start'
+                                                }}
+                                            >
+                                                {handleDay(item.weekday)} ( {item.description} ) 
+                                            </Typography>
+
+                                            <Grid container spacing={3} xs={12}>
+                                                <Grid item xs={3}>
+                                                    <Typography
+                                                        sx={{
+                                                            color: '#48539b',
+                                                        }}
+                                                        align='center'
+                                                    >
+                                                        Mínima
+                                                    </Typography>
+                                                    <Typography
+                                                        sx={{
+                                                            color: '#48539b'
+                                                        }}
+                                                        align='center'
+                                                    >
+                                                        {item.min}
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={3}>
+                                                    <Typography
+                                                        sx={{
+                                                            color: '#48539b',
+                                                        }}
+                                                        align='center'
+                                                    >
+                                                        Máxima
+                                                    </Typography>
+                                                    <Typography
+                                                        sx={{
+                                                            color: '#48539b',
+                                                        }}
+                                                        align='center'
+                                                    >  
+                                                        {item.max}
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <Typography
+                                                        sx={{
+                                                            color: '#48539b',
+                                                        }}
+                                                    >
+                                                        Data: {item.date}
+                                                    </Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </CardContent>
+                                    </Card>
+                                </Paper>
+                            </Container>
+                        </Grid>
+                    ))) : (
+                        <></>
+                    )
+                }
+            </Grid>
         </>
     );
 }
