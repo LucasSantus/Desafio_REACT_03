@@ -1,11 +1,7 @@
 import { useState } from 'react';
-
-import { Container, Grid, Button, Typography, Box, Paper, Card, CardContent, Tooltip, Divider, CardActions, AvatarGroup, Stack } from '@mui/material';
-
-import { useEffect } from "react";
+import { Container, Grid, Button, Typography, Paper, Card, CardContent } from '@mui/material';
 import { ApiService } from '../api/ApiService';
-import { ForecastInterface, WeatherInterface } from '../types/types';
-import { padding } from '@mui/system';
+import { WeatherInterface } from '../types/types';
 import { TextFieldCustom } from '../ui/styles/TextField';
 
 export default function Dashboard(){
@@ -32,25 +28,18 @@ export default function Dashboard(){
         switch(day){
             case "Seg":
                 return "Segunda-Feira";
-                break;
             case "Ter":
                 return "Terça-Feira";
-                break;
             case "Qua":
                 return "Quarta-Feira";
-                break;
             case "Qui":
                 return "Quinta-Feira";
-                break;
             case "Sex":
                 return "Sexta-Feira";
-                break;
             case "Sáb":
                 return "Sábado";
-                break;
             case "Dom":
                 return "Domingo";
-                break;
         }
     }
 
